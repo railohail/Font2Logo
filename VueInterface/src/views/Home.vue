@@ -166,6 +166,7 @@ async function runLogo(input: string = "") {
     },
     body: JSON.stringify(input),
   });
+  return response;
 }
 async function fetch_api_logo(path: string = "") {
   const response = await fetch(`http://127.0.0.1:8000/results/${path}`, {
