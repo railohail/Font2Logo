@@ -14,7 +14,7 @@
       <photo :Images="logoImages" />
 
       <Chip v-if="results.length > 0" label="Result Images" />
-      <photo :Images="results" />
+      <photot :Images="results" />
     </template>
   </Card>
 
@@ -27,6 +27,7 @@ import { storeToRefs } from 'pinia'
 import { useSubmitStoreFont, useSubmitStore, useFontStore } from '@/stores/useSubmitstore'
 import { fetch_api_att2font, fetch_api_Logo, post_api_att2font } from '@/utils/api'
 import photo from '@/components/photo.vue'
+import photot from '@/components/photot.vue'
 import Chip from 'primevue/chip'
 
 const submitStore = useSubmitStore()
@@ -48,7 +49,7 @@ async function fetchFont() {
 }
 async function fetchPicture() {
   logoImages.value = []
-  results.value = []
+  // results.value = []
 
   for (let i = 0; i < 9; i++) {
     const res = await fetch_api_Logo(`/results/output00${i}.png`, true)

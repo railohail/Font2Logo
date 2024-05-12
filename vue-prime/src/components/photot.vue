@@ -1,53 +1,23 @@
 <template>
   <div style="width: 100%; height: 100%">
-    <ScrollPanel
-      position="bottom"
-      :pt="{
-        wrapper: {
-          style: { 'border-right': '10px solid var(--surface-ground)' }
-        }
-      }"
-    >
-      <div>
-        <template
-          v-for="(_, index) in Math.max(attrImages.length, Math.ceil(logoImages.length / 9))"
-          :key="index"
-        >
-          <div v-if="index < attrImages.length" style="width: 100%; box-sizing: border-box">
-            <img
-              :src="attrImages[index].itemImageSrc"
-              :alt="attrImages[index].alt"
-              style="width: 100%; height: auto; object-fit: cover"
-            />
-          </div>
-          <div
-            v-if="index < Math.ceil(logoImages.length / 9)"
-            style="width: 100%; box-sizing: border-box"
-          >
-            <div style="display: flex; flex-wrap: nowrap; align-items: center">
-              <template
-                v-for="(item, logoIndex) in logoImages.slice(index * 9, (index + 1) * 9)"
-                :key="`logo-${index}-${logoIndex}`"
-              >
-                <Image :src="item.itemImageSrc" :alt="item.alt" width="200" />
-                <Divider
-                  v-if="logoIndex < logoImages.slice(index * 9, (index + 1) * 9).length - 1"
-                  layout="vertical"
-                  style="height: 200%; margin: 4px"
-                />
-              </template>
-            </div>
-          </div>
-        </template>
+    <div>
+      <div style="width: 100%; box-sizing: border-box">
+        <div style="display: flex; flex-wrap: nowrap; align-items: center">
+          <template v-for="(item, logoIndex) in visibleImages" :key="`logo-${logoIndex}`">
+            <Image :src="item.itemImageSrc" :alt="item.alt" width="100%" />
+          </template>
+        </div>
       </div>
-    </ScrollPanel>
+    </div>
+    <div v-if="Images.length > 0">
+      <button style="margin-right: 1%" @click="nextPage" :disabled="currentPage === 0">next</button>
+      <button @click="previousPage" :disabled="currentPage === totalPages - 1">previous</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { toRefs } from 'vue'
-import ScrollPanel from 'primevue/scrollpanel'
-import Divider from 'primevue/divider'
+import { toRefs, computed, ref, watch } from 'vue'
 
 interface Image {
   itemImageSrc: string
@@ -55,15 +25,44 @@ interface Image {
 }
 
 const props = defineProps({
-  attrImages: {
-    type: Array as () => Image[],
-    required: true
-  },
-  logoImages: {
+  Images: {
     type: Array as () => Image[],
     required: true
   }
 })
 
-const { attrImages, logoImages } = toRefs(props)
+const { Images } = toRefs(props)
+
+const currentPage = ref(0)
+const pageSize = 9
+
+const totalPages = computed(() => Math.ceil(Images.value.length / pageSize))
+
+const visibleImages = computed(() => {
+  const startIndex = currentPage.value * pageSize
+  const endIndex = startIndex + pageSize
+  const reversedImages = Images.value.slice().reverse()
+  const visibleReversedImages = reversedImages.slice(startIndex, endIndex)
+  return visibleReversedImages.reverse()
+})
+
+const previousPage = () => {
+  if (currentPage.value < totalPages.value - 1) {
+    currentPage.value++
+  }
+}
+
+const nextPage = () => {
+  if (currentPage.value > 0) {
+    currentPage.value--
+  }
+}
+
+watch(
+  Images,
+  () => {
+    currentPage.value = 0
+  },
+  { deep: true }
+)
 </script>
