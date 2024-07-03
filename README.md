@@ -1,4 +1,6 @@
 # Font2Logo
+[paper(chinese)](https://www.csie.ntpu.edu.tw/uploads/file/project/112/PRJ-NTPUCSIE-112-001%20-%20林琮翊.pdf)
+
 
 ![Sample Image](/img/Font2Logo.png)
 
